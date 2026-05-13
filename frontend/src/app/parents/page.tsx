@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { useLanguage } from "@/context/LanguageContext";
 import { Construction } from "lucide-react";
 
-export default function ReportsPage() {
+export default function ParentsPage() {
   const { t } = useLanguage();
 
   return (
@@ -14,7 +14,7 @@ export default function ReportsPage() {
           <Construction size={40} className="text-green-600" />
         </div>
         <h1 className="text-3xl font-bold text-green-800 mb-3">
-          {t("Reports Section", "ವರದಿಗಳ ವಿಭಾಗ")}
+          {t("Parents Section", "ಪೋಷಕರ ವಿಭಾಗ")}
         </h1>
         <p className="text-green-600 text-lg mb-2">
           {t("Coming Soon", "ಶೀಘ್ರದಲ್ಲೇ")}
