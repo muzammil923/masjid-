@@ -2,15 +2,11 @@
 
 import { useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { supabase } from "@/lib/supabase";
+import { getSupabase } from "@/lib/supabase";
 import { Loader2, AlertCircle } from "lucide-react";
 
 function setCookie(name: string, value: string) {
   document.cookie = `${name}=${value}; path=/; max-age=2592000; SameSite=Lax`;
-}
-
-function clearCookie(name: string) {
-  document.cookie = `${name}=; path=/; max-age=0`;
 }
 
 export default function AuthCallbackPage() {
@@ -39,7 +35,7 @@ export default function AuthCallbackPage() {
 
   const handleCallback = async (code: string) => {
     try {
-      const { data, error } = await supabase.auth.exchangeCodeForSession(code);
+      const { data, error } = await getSupabase().auth.exchangeCodeForSession(code);
 
       if (error || !data.session) {
         console.error("Supabase exchangeCodeForSession error:", error);

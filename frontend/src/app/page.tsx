@@ -5,7 +5,6 @@ import DashboardLayout from "@/components/DashboardLayout";
 import { useLanguage } from "@/context/LanguageContext";
 import { api } from "@/lib/api";
 import type { Student } from "@/types/student";
-import type { Staff } from "@/types/staff";
 import type { FinanceTransaction } from "@/types/finance";
 import { Users, UserCheck, Wallet, TrendingUp, Loader2 } from "lucide-react";
 
