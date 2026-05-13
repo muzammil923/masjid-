@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { getSupabase } from "@/lib/supabase";
 import { Loader2, AlertCircle } from "lucide-react";
@@ -9,7 +9,7 @@ function setCookie(name: string, value: string) {
   document.cookie = `${name}=${value}; path=/; max-age=2592000; SameSite=Lax`;
 }
 
-export default function AuthCallbackPage() {
+function CallbackContent() {
   const [error, setError] = useState("");
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -75,5 +75,17 @@ export default function AuthCallbackPage() {
         )}
       </div>
     </div>
+  );
+}
+
+export default function AuthCallbackPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gradient-to-br from-green-900 via-green-800 to-green-900 flex items-center justify-center p-4">
+        <Loader2 size={48} className="text-green-700 mx-auto animate-spin" />
+      </div>
+    }>
+      <CallbackContent />
+    </Suspense>
   );
 }
