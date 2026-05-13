@@ -60,6 +60,12 @@ export const api = {
   auth: {
     login: (email: string, password: string) =>
       request<{ user: any; session: any }>("/api/auth/login", { method: "POST", body: JSON.stringify({ email, password }) }),
+    googleLogin: (idToken: string) =>
+      request<{ user: any; session: any }>("/api/auth/google-login", { method: "POST", body: JSON.stringify({ id_token: idToken }) }),
+    googleLoginInit: () =>
+      request<{ data: { url: string } }>("/api/auth/google-init"),
+    register: (email: string, password: string, name?: string) =>
+      request<{ user: any; session: any }>("/api/auth/register", { method: "POST", body: JSON.stringify({ email, password, name }) }),
     logout: (accessToken?: string) =>
       request("/api/auth/logout", { method: "POST", body: JSON.stringify({ accessToken }) }),
     createAdmin: (email: string, password: string) =>

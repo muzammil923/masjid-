@@ -3,12 +3,23 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import { api } from "@/lib/api";
+import { supabase } from "@/lib/supabase";
+
+function setCookie(name: string, value: string) {
+  document.cookie = `${name}=${value}; path=/; max-age=2592000; SameSite=Lax`;
+}
+
+function clearCookie(name: string) {
+  document.cookie = `${name}=; path=/; max-age=0`;
+}
 
 interface AuthContextType {
   user: any | null;
   session: any | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<void>;
+  signInWithGoogle: () => Promise<void>;
+  register: (email: string, password: string, name?: string) => Promise<void>;
   signOut: () => Promise<void>;
 }
 
@@ -38,22 +49,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const signIn = async (email: string, password: string) => {
-    const { user, session } = await api.auth.login(email, password);
-
-    const authorizedEmails = ["admin@masjidcrm.com"];
-    if (!authorizedEmails.includes(user?.email || "")) {
-      throw new Error("unauthorized");
-    }
-
+  const setAuthData = (user: any, session: any) => {
     setUser(user);
     setSession(session);
     localStorage.setItem("auth_token", session?.access_token || "");
     localStorage.setItem("auth_user", JSON.stringify(user));
     localStorage.setItem("auth_session", JSON.stringify(session));
+    setCookie("auth_token", session?.access_token || "");
+  };
+
+  const signIn = async (email: string, password: string) => {
+    const { user, session } = await api.auth.login(email, password);
+    setAuthData(user, session);
+  };
+
+  const signInWithGoogle = async () => {
+    const { error } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/auth/callback`,
+      },
+    });
+
+    if (error) {
+      throw new Error(error.message);
+    }
+  };
+
+  const register = async (email: string, password: string, name?: string) => {
+    const { user, session } = await api.auth.register(email, password, name);
+    setAuthData(user, session);
   };
 
   const signOut = async () => {
+    await supabase.auth.signOut();
     const token = localStorage.getItem("auth_token");
     try {
       await api.auth.logout(token || undefined);
@@ -64,11 +93,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem("auth_token");
     localStorage.removeItem("auth_user");
     localStorage.removeItem("auth_session");
+    clearCookie("auth_token");
     router.push("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ user, session, loading, signIn, signOut }}>
+    <AuthContext.Provider value={{ user, session, loading, signIn, signInWithGoogle, register, signOut }}>
       {children}
     </AuthContext.Provider>
   );

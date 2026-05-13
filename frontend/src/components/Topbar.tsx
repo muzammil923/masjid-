@@ -17,8 +17,9 @@ export default function Topbar() {
     setSigningOut(false);
   };
 
-  const userEmail = user?.email || "admin@masjidcrm.com";
-  const userInitial = userEmail.charAt(0).toUpperCase();
+  const userName = user?.user_metadata?.name || user?.email || "";
+  const userEmail = user?.email || "";
+  const userInitial = (userName || userEmail).charAt(0).toUpperCase();
 
   return (
     <header className="sticky top-0 z-20 bg-white border-b border-green-100 shadow-sm">
@@ -54,7 +55,7 @@ export default function Topbar() {
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-green-100 py-2 z-20">
                   <div className="px-4 py-2 border-b border-green-50">
                     <p className="text-sm font-medium text-green-800">{userEmail}</p>
-                    <p className="text-xs text-green-500">Administrator</p>
+                    <p className="text-xs text-green-500">{t("User", "ಬಳಕೆದಾರ")}</p>
                   </div>
                   <button
                     onClick={handleSignOut}
